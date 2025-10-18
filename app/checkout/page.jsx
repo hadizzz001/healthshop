@@ -23,7 +23,7 @@ const page = () => {
   const [promoCodes, setPromoCodes] = useState([]); // Store promo codes from API
   const [usedAbcd1234, setUsedAbcd1234] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
-  const [deliveryFee, setDeliveryFee] = useState(subtotal > 50 ? 0 : 5);
+  const [deliveryFee, setDeliveryFee] = useState(subtotal >= 100 ? 0 : 5);
   const [total, setTotal] = useState((subtotal + deliveryFee).toFixed(2));
   const [showLink, setShowLink] = useState(false);
   const [country, setCountry] = useState('');
@@ -71,9 +71,8 @@ const page = () => {
         setUsedAbcd1234(true);
       }
     }
-
-    // Update delivery fee when subtotal changes
-    // setDeliveryFee(subtotal > 50 ? 0 : 4);
+ 
+    setDeliveryFee(subtotal >= 100 ? 0 : 4);
   }, [subtotal]);
 
   useEffect(() => {
@@ -186,7 +185,7 @@ useEffect(() => {
 
 
 useEffect(() => {
-  if (subtotal > 50) {
+  if (subtotal >= 100) {
     setDeliveryFee(0);
     return;
   }
@@ -230,7 +229,7 @@ useEffect(() => {
     }
 
     // Check for free delivery promo code or subtotal >= 100
-    if (promoCode.toLowerCase() === "freedelivery1" || subtotal > 50) {
+    if (promoCode.toLowerCase() === "freedelivery1" || subtotal >= 100) {
       setDeliveryFee(0); // ✅ Delivery fee updates, triggering useEffect to update total
     }
 

@@ -5,7 +5,7 @@ import { Truck, MapPin, Leaf } from "lucide-react";
 export default function OfferHeadline() {
   const items = [
     {
-      text: "Free delivery on orders over $50",
+      text: "Free delivery on orders over $100",
       icon: <Truck size={24} strokeWidth={1} style={{ marginRight: "8px" }} />,
     },
     {

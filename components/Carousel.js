@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 const MyCarousel = () => {
   const [imageSrc, setImageSrc] = useState(
-    "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760636139/top-view-capsules-with-bottle-oil-table_c35xt3.webp"
+    "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760797760/top-view-capsules-with-bottle-oil-table1_q8z2if.webp"
   );
   const [scale, setScale] = useState(1.1);
   const [enableScrollZoom, setEnableScrollZoom] = useState(false);
@@ -13,7 +13,7 @@ const MyCarousel = () => {
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
       setImageSrc(
-        "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760636139/top-view-capsules-with-bottle-oil-table_c35xt3.webp"
+        "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760797760/top-view-capsules-with-bottle-oil-table1_q8z2if.webp"
       );
     }
 
@@ -59,12 +59,15 @@ const MyCarousel = () => {
         className="absolute top-0 left-0 w-full h-full object-cover will-change-transform"
       />
 
+      {/* Black Overlay */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/40 pointer-events-none" />
+
       {/* Overlay Content */}
-      <div className="relative z-10 flex flex-col items-start justify-center h-full p-20 text-left text-black phoneP">
-        <p className="text-[14px] mt-2 fadeUp delay-200 gothic mb-3">
+      <div className="relative z-10 flex flex-col items-start justify-center h-full p-20 text-left text-white phoneP">
+        <p className="text-[14px] mt-2 fadeUp delay-200 gothic mb-3 text-white">
           U.S imported supplements
         </p>
-        <h1 className="font-bold uppercase animate-popupUp text-black bannertitle">
+        <h1 className="font-bold uppercase animate-popupUp text-white bannertitle">
           Wellness<br /> Vitality Advice
         </h1>
         
@@ -85,7 +88,6 @@ const MyCarousel = () => {
             opacity: 1;
           }
         }
-
         @keyframes fadeUp {
           0% {
             opacity: 0;
@@ -96,19 +98,15 @@ const MyCarousel = () => {
             transform: translateY(0);
           }
         }
-
         .animate-popupUp {
           animation: popupUp 1s ease-out forwards;
         }
-
         .fadeUp {
           animation: fadeUp 1s ease-out forwards;
         }
-
         .delay-100 {
           animation-delay: 0.1s;
         }
-
         .delay-200 {
           animation-delay: 0.2s;
         }

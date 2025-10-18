@@ -10,10 +10,10 @@ const MyCarousel = () => {
       <picture>
         <source
           media="(min-width: 768px)"
-          srcSet="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760636139/close-up-green-apple-dumbbell-white-surface1_hqpyhs.webp"
+          srcSet="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760803033/Nowfoods-banner-1024x5391_schfoz.webp"
         />
         <img
-          src="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760636139/close-up-green-apple-dumbbell-white-surface1_hqpyhs.webp"
+          src="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760803033/Nowfoods-banner-1024x5391_schfoz.webp"
           alt="Sunny-Day Sale Background"
           className="absolute top-0 left-0 w-full h-full object-cover"
         />

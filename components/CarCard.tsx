@@ -17,8 +17,8 @@ const CarCard = ({ temp }: CarCardProps) => {
 
   return (
     <a id="nonehover" href={`/product?id=${_id}`}>
-      <div className="w-[350px] sm:w-[330px] mx-auto">
-        <div className="relative overflow-hidden rounded-2xl group w-full h-[450px]">
+      <div className="w-[150px] sm:w-[230px] mx-auto">
+        <div className="relative overflow-hidden rounded-2xl group w-full h-[350px]">
           <img
             src={img[0]}
             alt={title}
