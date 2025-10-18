@@ -13,7 +13,8 @@ const ResponsiveVideo = () => {
       try {
         const response = await fetch("/api/category");
         const data = await response.json();
-        setCategories(data);
+        const selectedCategories = [data[0], data[1], data[2]].filter(Boolean);
+        setCategories(selectedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -22,14 +23,11 @@ const ResponsiveVideo = () => {
     fetchCategories();
   }, []);
 
-const renderMedia = (category) => {
-  const isVideo = category.img[0].endsWith(".mp4");
-
-  return (
-    <div className="relative group w-[370px] h-[550px] flex-shrink-0 overflow-hidden rounded-2xl">
-      {isVideo ? (
+  const renderMedia = (category) => {
+    if (category.img[0].endsWith(".mp4")) {
+      return (
         <video
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 rounded-2xl"
+          className="w-full h-full object-cover rounded-lg"
           autoPlay
           loop
           muted
@@ -38,54 +36,65 @@ const renderMedia = (category) => {
           <source src={category.img[0]} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-      ) : (
-        <img
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 rounded-2xl"
-          src={category.img[0]}
-          alt={category.name}
-        />
-      )}
-
-      {/* 🔥 Black overlay with 40% opacity */}
-      <div className="absolute inset-0 bg-black/40 transition-opacity duration-500 group-hover:bg-black/50"></div>
-
-      <div className="absolute bottom-0 w-full p-4 text-white flex flex-col items-start z-10">
-        <h3 className="reviewText">{category.name}</h3>
-        <button
-          onClick={() => router.push("/search?cat=" + category.name)}
-          className="mt-2 myButton2 relative overflow-hidden text-white"
-        >
-          Shop Now
-        </button>
-      </div>
-    </div>
-  );
-};
-
+      );
+    }
+    return (
+      <img
+        className="w-full h-full object-cover rounded-lg"
+        src={category.img[0]}
+        alt={category.name}
+      />
+    );
+  };
 
   return (
-    <div className="padforcat">
-      <h1 className="myntit mb-3 sm:mb-5">
-        Collections
-      </h1>
+    <>
+      <div data-product-list-category="ymal-slider">
+        <div className="padforcat">
+          <h1 className="myntit mb-3 sm:mb-5" style={{ cursor: "pointer" }}>
+            Our Collections
+          </h1>
+        </div>
+      </div>
 
-      {/* Mobile: horizontal scroll */}
-      <div className="flex overflow-x-auto gap-4 ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {categories.map((category, index) => (
           <motion.div
             key={index}
+            className="flex flex-col items-center cursor-pointer"
             initial={{ scale: 0.9, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.5 }}
             viewport={{ once: true }}
+            onClick={() => router.push("/search?cat=" + category.name)}
           >
             {renderMedia(category)}
+<h3
+  className="mt-3 text-lg font-semibold text-center myGray relative"
+  style={{
+    paddingBottom: "6px",
+  }}
+>
+  {category.name}
+  <span
+    style={{
+      content: '""',
+      position: "absolute",
+      left: "50%",
+      bottom: "0",
+      transform: "translateX(-50%)",
+      width: "50%", // adjust if needed
+      height: "2px",
+      backgroundColor: "#146f29",
+      display: "block",
+    }}
+  ></span>
+</h3>
+
           </motion.div>
         ))}
       </div>
-
-
-    </div>
+    </>
   );
 };
 

@@ -106,11 +106,11 @@ const Body = () => {
                         key={item._id}
                         className="br_grid br_grid-cols-1 supports-subgrid:br_row-span-4 supports-subgrid:br_grid-rows-[subgrid]"
                       >
-<div className="relative inline-block w-full max-w-[300px] aspect-square">
+<div className="relative w-full aspect-square  flex items-center justify-center  ">
   <img
     src={item.img[0]}
     alt="Default"
-    className="w-full h-full object-cover object-center rounded"
+    className="max-w-full max-h-full object-contain"
   />
 
   {(
@@ -121,11 +121,13 @@ const Body = () => {
       )
     )
   ) && (
-    <div className="absolute inset-0 bg-gray-600 bg-opacity-70 text-white flex items-center justify-center text-lg font-bold z-10 rounded">
+    <div className="absolute inset-0 bg-gray-600 bg-opacity-70 text-white flex items-center justify-center text-lg font-bold z-10">
       Out of Stock
     </div>
   )}
 </div>
+
+
 
 
 
@@ -179,7 +181,7 @@ const Body = () => {
                                         })()
                                         : `$${item.discount}`
                                       )
-                                    } 
+                                    }
                                   </span>
                                 </div>
                                 <br />
