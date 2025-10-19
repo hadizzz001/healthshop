@@ -11,6 +11,8 @@ import OutOfStockComponent from '../../components/OutOfStockComponent';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
+ 
+import { motion } from 'framer-motion';
 
 const Page = () => {
   const [translateXValue, setTranslateXValue] = useState(0);
@@ -19,7 +21,7 @@ const Page = () => {
   const search = searchParams.get('id');
   const custom = searchParams.get('custom');
   const imgg = searchParams.get('imgg');
-  let imgs, title, price, desc, cat, brand, discount, id, stock, type, color
+  let imgs, title, price, desc, cat, brand, discount, id, stock, type, color, points
   const { cart, addToCart, quantities } = useCart();
   const { isBooleanValue, setBooleanValue } = useBooleanValue();
   const isInCart = cart?.some((item) => item._id === search);
@@ -66,6 +68,7 @@ const Page = () => {
     stock = allTemp1.stock;
     type = allTemp1.type;
     color = allTemp1.color;
+    points = allTemp1.points;
   }
 
 
@@ -250,6 +253,9 @@ const Page = () => {
                     </h1>
                     <p className='myPrice'>
                       Category: {cat}
+                    </p>
+                    <p className='myPrice'>
+                      You will earn {points} points
                     </p>
 
                   </span>
@@ -437,45 +443,70 @@ const Page = () => {
 
                 </section>
               </div>
-              <span className="ProvidersIfSelectedProductMatchesFilter">
-                <content-block slug="product-page-wssb">
-                  <style dangerouslySetInnerHTML={{
-                    __html: ".bagsFeaturesGrid{margin:0 auto;padding:30px 5%;background:#111622}.bagsFeaturesGrid__gridWrapper{max-width:1150px;margin:0 auto}.bagsFeaturesGrid__title{-webkit-font-smoothing:antialiased;text-align:center;padding:0 0 25px;margin:0 auto;color:#fff}.bagsFeaturesGrid__feature{background:inherit;display:grid;grid-template-s:auto;align-items:center;padding:5px 0}.bagsFeaturesGrid__feature--text{-webkit-font-smoothing:antialiased;text-align:center;padding:15px 0 20px;grid-:2}.bagsFeaturesGrid__feature--text a{color:inherit}.bagsFeaturesGrid__feature--text h3{color:#fff;padding-bottom:10px}.bagsFeaturesGrid__feature--text p{color:#eee}.bagsFeaturesGrid__feature--image{position:relative;width:100%;min-height:62vw}@media (min-width: 811px){.bagsFeaturesGrid__feature--image{min-height:28vw}}@media (min-width: 1460px){.bagsFeaturesGrid__feature--image{min-height:409px}}.bagsFeaturesGrid__feature--image img{width:100%;display:block}.bagsFeaturesGrid__feature--image--logo{position:absolute;bottom:3.5%;right:8%;width:15vw}.bagsFeaturesGrid__feature--image--logo img{width:100%}.bagsFeaturesGrid__feature--text--logo{width:100px;padding-top:30px}.bagsFeaturesGrid__feature--text--logo img{width:100%}@media (min-width: 811px){.bagsFeaturesGrid{padding:75px 10%}.bagsFeaturesGrid__title{padding:0 0 60px}.bagsFeaturesGrid__feature{display:grid;grid-template-columns:1fr 1fr;grid-template-s:auto;padding:30px 0}.bagsFeaturesGrid__feature--image--logo{width:7vw}.bagsFeaturesGrid__feature .left{padding-right:15%}.bagsFeaturesGrid__feature .right{padding-left:15%}.bagsFeaturesGrid__feature--text{-webkit-font-smoothing:antialiased;text-align:left;padding:0;grid-:auto}}"
-                  }} />
-                  <style dangerouslySetInnerHTML={{
-                    __html: ".ProductTile-SliderContainer--YMAL .ProductTile-SliderContainer-Title{height:auto;text-align:center;padding-bottom:10px}.ProductTile-SliderContainer--YMAL.ProductTile-SliderContainer{padding:40px 0 10px;background-color:#fff ;display:flex;flex-direction:column;align-items:center}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev-ar,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next-ar{height:25px;width:25px;border-top:2px solid #999;border-right:2px solid #999}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next-ar{transform:rotate(45deg);margin:0 15px 0 0}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev-ar{transform:rotate(225deg);margin:0 0 0 15px}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next{height:430px;width:80px;cursor:pointer;background-color:transparent;transition:opacity .3s ease;display:none;border:none;padding:0;appearance:none;-webkit-appearance:none}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev[disabled],.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next[disabled]{opacity:0;pointer-events:none}@media (min-width: 700px){.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next{display:flex;align-items:center;justify-content:center}}@media (min-width: 811px){.ProductTile-SliderContainer--YMAL .ProductTile-SliderContainer-Title{padding-bottom:30px}}.ProductTile-SliderContainer--YMAL .productRangeSlider{display:flex;align-items:center;max-width:1340px;width:100%;padding:5px;justify-content:space-between;margin:0 auto;min-height:145px}"
-                  }} />
-                  <div className="ProductTile-SliderContainer ProductTile-SliderContainer--YMAL" data-product-list-category="ymal-slider">
-                    <div className="ProductTile-SliderContainer-Title br_text-3xl-serif br_text-white myGray">You might also like:</div>
-                    {allTemp2 && allTemp2?.length > 0 ? (
-                      <section style={{ maxWidth: "100%" }}>
-                        <Swiper spaceBetween={20} loop modules={[Autoplay]} autoplay={{
-                          delay: 2000,
-                          stopOnLastSlide: false,
-                          reverseDirection: true
-                        }} breakpoints={{
-                          150: {
-                            slidesPerView: 2,
-                          },
-                          768: {
-                            slidesPerView: 4,
-                          },
-                        }}>
-                          <div className='home__cars-wrapper'>
-                            {allTemp2.map((temp) => (
-                              <SwiperSlide key={temp._id}><CarCard temp={temp} /></SwiperSlide>
-                            ))}
+    <div className="ProvidersIfSelectedProductMatchesFilter mt-4">
+      <content-block slug="product-page-wssb">
+        <div className="ProductTile-SliderContainer ProductTile-SliderContainer--YMAL">
+
+          {allTemp2 && allTemp2.length > 0 ? (
+            <>
+              <div data-product-list-category="ymal-slider">
+                <div className="padforcat">
+                  <h1
+                    onClick={() => router.push("/shop")}
+                    className="myntit mb-3 sm:mb-5"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    Similar Items
+                  </h1>
+
+                  <section className="mb-5" style={{ maxWidth: "100%" }}>
+                    <Swiper
+                      modules={[Autoplay]}
+                      loop={true}
+                      autoplay={{
+                        delay: 2500,
+                        disableOnInteraction: false,
+                      }}
+                      breakpoints={{
+                        150: { slidesPerView: 1, spaceBetween: 15 },
+                        768: { slidesPerView: 4, spaceBetween: 20 },
+                        1024: { slidesPerView: 4, spaceBetween: 24 },
+                      }}
+                      spaceBetween={15}
+                    >
+                      {allTemp2.map((temp, index) => (
+                        <SwiperSlide key={temp.id}>
+                          <div className="flex justify-center items-center w-full">
+                            <motion.div
+                              initial={{ opacity: 0, x: -50 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true, amount: 0.2 }}
+                              transition={{
+                                duration: 0.6,
+                                delay: index * 0.3,
+                                ease: "easeOut",
+                              }}
+                            >
+                              <CarCard temp={temp} />
+                            </motion.div>
                           </div>
-                        </Swiper>
-                      </section>
-                    ) : (
-                      <div className='home___error-container'>
-                        <h2 className='text-black text-xl dont-bold'>...</h2>
-                      </div>
-                    )}
-                  </div>
-                </content-block>
-              </span>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </section>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="home___error-container">
+              <h2 className="text-black text-xl font-bold">
+                No products available
+              </h2>
+            </div>
+          )}
+        </div>
+      </content-block>
+    </div>
             </div>
           </div>
         </bellroy-product-detail>

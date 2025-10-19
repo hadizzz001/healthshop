@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 const MyCarousel = () => {
   const [imageSrc, setImageSrc] = useState(
-    "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760797760/top-view-capsules-with-bottle-oil-table1_q8z2if.webp"
+    "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760865181/photo_2022-08-18_21-35-30z_nodaqv.webp"
   );
   const [scale, setScale] = useState(1.1);
   const [enableScrollZoom, setEnableScrollZoom] = useState(false);
@@ -13,7 +13,7 @@ const MyCarousel = () => {
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
       setImageSrc(
-        "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760797760/top-view-capsules-with-bottle-oil-table1_q8z2if.webp"
+        "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760865181/photo_2022-08-18_21-35-30z_nodaqv.webp"
       );
     }
 

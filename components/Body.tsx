@@ -2,15 +2,12 @@
 import { useState, useEffect } from "react";
 import ProductArrival from './ProductArrival';
 import Catslider from './Catslider';
-import ProductTop from './ProductTop';
-import Vid from './Vid';
-import ReviewsSwiper from './ReviewsSwiper';
-import Rate from './Rate';
-import Offer from './Offer';
-import Box from './Box';
+import ProductTop from './ProductTop'; 
 import Carousel from './Carousel';
 import Carousel1 from './Carousel1';
 import Section from './Section';
+import Section1 from './Section1';
+import Box from './Box';
 
 
 
@@ -122,7 +119,7 @@ const Body = () => {
 
         <div id="usp-scroll-to"></div>
 
-        {/* <Box /> */}
+        <Box />
 
         <Carousel />
 
@@ -131,7 +128,7 @@ const Body = () => {
         <Carousel1 />
 
         <ProductTop />
-        <Section />
+        <Section1 /> 
  
 
 

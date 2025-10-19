@@ -4,11 +4,8 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from '../context/CartContext';
-import WhatsAppButton from "../../components/WhatsAppButton";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import axios from 'axios';
-import intlTelInput from 'intl-tel-input';
+import WhatsAppButton from "../../components/WhatsAppButton"; 
+import axios from 'axios'; 
 import 'intl-tel-input/build/css/intlTelInput.css';
 
 
@@ -25,8 +22,10 @@ const page = () => {
   const [discountApplied, setDiscountApplied] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState(subtotal >= 100 ? 0 : 5);
   const [total, setTotal] = useState((subtotal + deliveryFee).toFixed(2));
-  const [showLink, setShowLink] = useState(false);
   const [country, setCountry] = useState('');
+  const [points, setPoints] = useState(0);
+const [pointsDiscount, setPointsDiscount] = useState(0);
+
   const [inputs, setInputs] = useState({
     fname: "",
     lname: "",
@@ -45,6 +44,28 @@ const page = () => {
     dial: '',
   }); 
 
+
+  useEffect(() => {
+  const current = parseInt(localStorage.getItem("userPoints") || "0");
+  setPoints(current);
+}, []);
+
+
+
+const applyPoints = () => {
+  if (points <= 0) return alert("You have no points to use!");
+
+  const discountValue = points * 0.04; // 1 point = $0.04
+
+  if (discountValue > subtotal + deliveryFee) {
+    alert("Points exceed total price!");
+    return;
+  }
+
+  setPointsDiscount(discountValue.toFixed(2));
+  setTotal(((subtotal + deliveryFee) - discountValue).toFixed(2));
+  localStorage.setItem("userPoints", "0");  
+};
 
 
 
@@ -218,7 +239,7 @@ useEffect(() => {
         return;
       }
       // Apply 10% discount and mark the promo code as used
-      const discountedTotal = ((subtotal + deliveryFee) * 0.9).toFixed(2);
+      const discountedTotal = ((subtotal + deliveryFee) * 0.95).toFixed(2);
       setTotal(discountedTotal);
       setUsedAbcd1234(true);
       if (typeof window !== "undefined") {
@@ -245,118 +266,7 @@ useEffect(() => {
   };
 
 
-  const handleCheckboxChange = (e) => {
-    setShowLink(e.target.checked);
-  };
-
-
-
-
-
-
-
-  const generatePDF = async () => {
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('Product List PDF', 10, 10);
-
-    const imagePromises = cart.map(async (item) => {
-      const imageUrl = item.img[0];
-      const imageData = await toDataURL(imageUrl);
-      return {
-        ...item,
-        imageData,
-      };
-    });
-
-    const itemsWithImages = await Promise.all(imagePromises);
-
-    const tableData = itemsWithImages.map((item) => [
-      { content: '', image: item.imageData },
-      item.title,
-      item.category,
-      `$${item.discount}`,
-      item.quantity,
-      item.selectedColor,
-    ]);
-
-    // Utility to chunk array into groups of 8
-    const chunkArray = (arr, size) =>
-      Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-        arr.slice(i * size, i * size + size)
-      );
-
-    const chunkedData = chunkArray(tableData, 8);
-    let startY = 20;
-
-    chunkedData.forEach((chunk, index) => {
-      if (index > 0) {
-        doc.addPage();
-        startY = 10;
-        doc.setFontSize(18);
-        doc.text('Product List PDF (continued)', 10, startY);
-        startY += 10;
-      }
-
-      autoTable(doc, {
-        startY,
-        head: [['Image', 'Title', 'Category', 'Price', 'Quantity', 'Color']],
-        body: chunk,
-        didDrawCell: (data) => {
-          if (data.column.index === 0 && data.cell.raw.image) {
-            doc.addImage(
-              data.cell.raw.image,
-              'JPEG',
-              data.cell.x + 2,
-              data.cell.y + 2,
-              25,
-              25
-            );
-          }
-        },
-        columnStyles: {
-          0: { cellWidth: 30 },
-        },
-        headStyles: {
-          minCellHeight: 10,
-          valign: 'middle',
-          halign: 'center',
-        },
-        bodyStyles: {
-          minCellHeight: 30,
-          valign: 'middle',
-          halign: 'center',
-        },
-        styles: {
-          fontSize: 10,
-          cellPadding: 3,
-        },
-      });
-    });
-
-    doc.save('cart-items.pdf');
-  };
-
-  const toDataURL = async (url) => {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  };
-
-
-
-
-
-
-
-
-
-
-
+  
 
 
   return (
@@ -558,6 +468,8 @@ useEffect(() => {
                             {discountApplied ? "Done!" : "Apply"} {/* Show "Done!" when discount is applied */}
                           </button>
                         </div>
+
+                        
 
                         <tfoot>
                           <tr className="cart-subtotal">
@@ -1240,6 +1152,8 @@ useEffect(() => {
 
 
 
+
+
                                                 <tfoot>
                                                   <tr className="cart-subtotal">
                                                     <th>
@@ -1311,6 +1225,22 @@ useEffect(() => {
                         </div>{" "}
                       </div>
                     </div>
+
+
+{points > 0 && !pointsDiscount && (
+  <button 
+    onClick={applyPoints} 
+    className="text-black p-2  underline mt-2 mb-2 w-full"
+  >
+    Apply My Points ({points} pts = ${ (points * 0.04).toFixed(2) })
+  </button>
+)}
+
+{pointsDiscount > 0 && (
+  <p className="text-green-600 p-2  underline mt-2 mb-2 w-full">
+    ✅ {points} points applied (-${pointsDiscount})
+  </p>
+)}
 
 
                     {total !== null && (

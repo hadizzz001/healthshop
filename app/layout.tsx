@@ -12,7 +12,7 @@ import GifLoader from '../components/GifLoader'
 import Offer from '../components/Offer'
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { GoogleAnalytics } from '@next/third-parties/google'
-
+import PointsWatcher from "../components/PointsWatcher";
 
 
 
@@ -119,13 +119,13 @@ export default function RootLayout({
         />
 
         <link href="https://fonts.cdnfonts.com/css/sf-mono" rel="stylesheet" />
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
 
 
-<link href="https://fonts.cdnfonts.com/css/trade-gothic-lt-std" rel="stylesheet"/>
-                
+        <link href="https://fonts.cdnfonts.com/css/trade-gothic-lt-std" rel="stylesheet" />
+
 
 
 
@@ -135,7 +135,7 @@ export default function RootLayout({
       </>
 
       <body >
-
+        <PointsWatcher />
         <Offer />
         <GifLoader />
 

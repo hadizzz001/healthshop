@@ -49,6 +49,13 @@ const WhatsAppButton = ({ inputs, items, total, delivery, code }) => {
         }
       }
 
+      let earnedPoints = 0;
+
+      for (const item of items) {
+        const quantityToDecrease = parseInt(item.quantity, 10);
+        earnedPoints += parseInt(item.points || 0) * quantityToDecrease;
+      }
+
 
       // 2. Save order (optional) 
       const orderResponse = await fetch("/api/sendOrder", {
@@ -79,6 +86,10 @@ const WhatsAppButton = ({ inputs, items, total, delivery, code }) => {
       }
 
       alert("Order placed successfully!");
+
+      const currentPoints = parseInt(localStorage.getItem("userPoints") || "0");
+      const newTotalPoints = currentPoints + earnedPoints;
+      localStorage.setItem("userPoints", newTotalPoints);
 
     } catch (error) {
       console.error("Error processing order:", error);
@@ -136,7 +147,7 @@ export default WhatsAppButton;
 
 const createWhatsAppURL = (inputs, items, total, delivery, code, subtotal) => {
   const { country, city, apt, address, fname, lname, phone, email } = inputs;
- 
+
 
 
   // Formatting the message

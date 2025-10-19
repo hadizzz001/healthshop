@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Cart from "../components/Cart"
 import { useBooleanValue } from '../app/context/CartBoolContext';
 import { useCart } from '../app/context/CartContext';
@@ -8,7 +8,7 @@ import {
   Menu,
   X,
   Search,
-  ShoppingCart ,
+  ShoppingCart,
 } from 'lucide-react';
 
 export default function NavBar() {
@@ -17,6 +17,25 @@ export default function NavBar() {
   const [cartOpen, setCartOpen] = useState(false);
   const { cart } = useCart();
   const { isBooleanValue, setBooleanValue } = useBooleanValue();
+const [points, setPoints] = useState(() => {
+  if (typeof window !== "undefined") {
+    return parseInt(localStorage.getItem("userPoints") || "0");
+  }
+  return 0;
+});
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const interval = setInterval(() => {
+      const current = parseInt(localStorage.getItem("userPoints") || "0");
+      if (current !== points) {
+        setPoints(current);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }
+}, [points]);
 
 
 
@@ -50,7 +69,7 @@ export default function NavBar() {
       <header
         className="w-full sticky top-0  "
         style={{
-          background: '#f1ede7', 
+          background: '#f1ede7',
         }}
       >
 
@@ -79,23 +98,27 @@ export default function NavBar() {
           </div>
 
 
-          {/* Search & Cart */}
-          <div className="flex items-center space-x-4">
-            <button onClick={() => setSearchOpen(true)} aria-label="Search">
-              <Search className="w-6 h-6 stroke-[1]" />
-            </button>
-            <span onClick={handleClickc} className="menuicon">
+{/* Search, Points & Cart */}
+<div className="flex items-center space-x-4">
+  <button onClick={() => setSearchOpen(true)} aria-label="Search" className="flex items-center space-x-1">
+    <Search className="w-6 h-6 stroke-[1]" />
 
-<ShoppingCart  className="w-6 h-6 stroke-[1]" />
+  </button>
+
+  <span onClick={handleClickc} className="menuicon relative">
+    <ShoppingCart className="w-6 h-6 stroke-[1]" />
+
+    {cart && cart.length > 0 ? (
+      <span className="MiniCart_CartIndicator_Badge1"></span>
+    ) : (
+      <div></div>
+    )}
+  </span>
 
 
-              {cart && cart.length > 0 ? (
-                <span className="MiniCart_CartIndicator_Badge1"></span>
-              ) :
-                (<div></div>)
-              }
-            </span>
-          </div>
+ <span className="text-sm font-semibold">{points} pts</span>
+</div>
+
         </div>
 
         {/* Fullscreen Menu */}
@@ -110,7 +133,7 @@ export default function NavBar() {
             </button>
             <nav className="flex flex-col items-center gap-6 mt-12 text-3xl font-bold">
               <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
-              <a href="/shop" onClick={() => setMenuOpen(false)}>Shop</a> 
+              <a href="/shop" onClick={() => setMenuOpen(false)}>Shop</a>
               <a href="/contact" onClick={() => setMenuOpen(false)}>Contact Us</a>
             </nav>
 

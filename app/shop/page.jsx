@@ -277,7 +277,7 @@ const Body = () => {
                       >
 <div className="relative w-full aspect-square  flex items-center justify-center  ">
   <img
-    src={item.img[0]}
+    src={item.img[0].replace('/upload/', '/upload/f_auto,q_25/')}
     alt="Default"
     className="max-w-full max-h-full object-contain"
   />

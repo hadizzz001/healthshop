@@ -5,17 +5,17 @@ import { motion } from 'framer-motion';
 
 const items = [
   {
-    icon: <Sprout strokeWidth={0.5} className="w-16 h-16 text-[#333333]" />,
+    icon: <Sprout strokeWidth={0.5} className="w-16 h-16 text-[#000]" />,
     title: 'ETHICAL PRODUCTS',
     desc: 'from ingredients to manufacture',
   },
   {
-    icon: <RabbitIcon strokeWidth={0.5} className="w-16 h-16 text-[#333333]" />,
+    icon: <RabbitIcon strokeWidth={0.5} className="w-16 h-16 text-[#000]" />,
     title: 'TESTED ON HUMANS',
     desc: 'never on animals',
   },
   {
-    icon: <AtomIcon strokeWidth={0.5} className="w-16 h-16 text-[#333333]" />,
+    icon: <AtomIcon strokeWidth={0.5} className="w-16 h-16 text-[#000]" />,
     title: 'FUNCTIONAL FORMULAS',
     desc: 'made to exceed expectations',
   },
@@ -23,7 +23,7 @@ const items = [
 
 export default function EthicalSection() {
   return (
-    <section className="py-12   text-[#333333]">
+    <section className="py-12   text-[#000]">
       {/* Top line */}
       <div className="h-[0.2px] bg-black mb-10" />
 

@@ -11,8 +11,7 @@ export default function OfferPopup() {
   useEffect(() => {
     if (
       window.location.hostname === "localhost" ||
-      window.location.hostname === "petyshop.netlify.app" ||
-      window.location.hostname === "petyshop.me"
+      window.location.hostname === "healthshoplb.netlify.app" 
     ) {
       const hasSeenPopup = localStorage.getItem("hasSeenOfferPopup");
       if (!hasSeenPopup) {
@@ -42,7 +41,7 @@ export default function OfferPopup() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("Abcd12345");
+    navigator.clipboard.writeText("Abcd1234");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000); // Reset after 2s
   };
@@ -109,7 +108,7 @@ export default function OfferPopup() {
         </button>
 
         {/* Header */}
-        <h2 className="myGray">GET 10% OFF YOUR FIRST ORDER NOW!</h2>
+        <h2 className="myGray">GET 5% OFF YOUR FIRST ORDER NOW!</h2>
 
         {!isSubmitted ? (
           <>
@@ -171,7 +170,7 @@ export default function OfferPopup() {
               }}
               className="myBB"
             >
-              { "Abcd12345"}
+              { "Abcd1234"}
               {/* 🔥 Copy Button */}
               <button
                 onClick={handleCopy}
