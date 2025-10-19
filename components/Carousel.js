@@ -1,116 +1,41 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const MyCarousel = () => {
-  const [imageSrc, setImageSrc] = useState(
-    "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760882736/538049844_18283377064262339_389714377949078840_n_nwe8my.jpg"
-  );
-  const [scale, setScale] = useState(1.1);
-  const [enableScrollZoom, setEnableScrollZoom] = useState(false);
-
-  useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      setImageSrc(
-        "https://res.cloudinary.com/dpb42mz2q/image/upload/v1760882736/538049844_18283377064262339_389714377949078840_n_nwe8my.jpg"
-      );
-    }
-
-    const timeout = setTimeout(() => {
-      setScale(1);
-      setEnableScrollZoom(true);
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
-    if (!enableScrollZoom) return;
-
-    let lastScroll = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      const direction = currentScroll > lastScroll ? "down" : "up";
-
-      setScale((prev) => {
-        let newScale = direction === "down" ? prev + 0.002 : prev - 0.002;
-        return Math.min(Math.max(newScale, 1), 1.1);
-      });
-
-      lastScroll = currentScroll;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [enableScrollZoom]);
-
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div
+      className="
+        relative w-full 
+        h-screen            /* Default: full screen */
+        md:h-screen         /* Desktop/tablet stays full screen */
+        h-[100vw]           /* Mobile: make it square (height = screen width) */
+        overflow-hidden
+      "
+    >
       {/* Background Image */}
       <img
-        src={imageSrc}
+        src="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760882736/538049844_18283377064262339_389714377949078840_n_nwe8my.jpg"
         alt="Banner"
-        style={{
-          transform: `scale(${scale})`,
-          transition: "transform 0.6s ease-out",
-        }}
-        className="absolute top-0 left-0 w-full h-full object-cover will-change-transform"
+        className="absolute top-0 left-0 w-full h-full object-cover"
       />
 
       {/* Black Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/40 pointer-events-none" />
+      {/* <div className="absolute top-0 left-0 w-full h-full bg-black/40 pointer-events-none" /> */}
 
       {/* Overlay Content */}
-      <div className="relative z-10 flex flex-col items-start justify-center h-full p-20 text-left text-white phoneP">
-        <p className="text-[14px] mt-2 fadeUp delay-200 gothic mb-3 text-white">
+      {/* <div className="relative z-10 flex flex-col items-start justify-center h-full p-20 text-left text-white phoneP">
+        <p className="text-[14px] mt-2 gothic mb-3 text-white">
           U.S imported supplements
         </p>
-        <h1 className="font-bold uppercase animate-popupUp text-white bannertitle">
+        <h1 className="font-bold uppercase text-white bannertitle">
           Wellness<br /> Vitality Advice
         </h1>
-        
+
         <a href="/shop" style={{ padding: "1em" }} className="mt-10 myButton">
           Shop Now
         </a>
-      </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes popupUp {
-          0% {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          100% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        @keyframes fadeUp {
-          0% {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-popupUp {
-          animation: popupUp 1s ease-out forwards;
-        }
-        .fadeUp {
-          animation: fadeUp 1s ease-out forwards;
-        }
-        .delay-100 {
-          animation-delay: 0.1s;
-        }
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-      `}</style>
+      </div> */}
     </div>
   );
 };
