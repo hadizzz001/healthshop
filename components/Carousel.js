@@ -4,15 +4,7 @@ import React from "react";
 
 const MyCarousel = () => {
   return (
-    <div
-      className="
-        relative w-full 
-        h-screen            /* Default: full screen */
-        md:h-screen         /* Desktop/tablet stays full screen */
-        h-[100vw]           /* Mobile: make it square (height = screen width) */
-        overflow-hidden
-      "
-    >
+    <div className="relative w-full h-screen overflow-hidden carousel-wrapper">
       {/* Background Image */}
       <img
         src="https://res.cloudinary.com/dpb42mz2q/image/upload/v1760882736/538049844_18283377064262339_389714377949078840_n_nwe8my.jpg"
@@ -36,6 +28,15 @@ const MyCarousel = () => {
           Shop Now
         </a>
       </div> */}
+
+      {/* Force square height on mobile */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .carousel-wrapper {
+            height: 100vw !important; /* ALWAYS square */
+          }
+        }
+      `}</style>
     </div>
   );
 };
