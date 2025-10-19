@@ -254,9 +254,9 @@ const Page = () => {
                     <p className='myPrice'>
                       Category: {cat}
                     </p>
-                    <p className='myPrice'>
+                    {/* <p className='myPrice'>
                       You will earn {points} points
-                    </p>
+                    </p> */}
 
                   </span>
                   <div className="ApexPriceAndFreeShippingWrapper">

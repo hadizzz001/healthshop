@@ -116,7 +116,7 @@ useEffect(() => {
   </span>
 
 
- <span className="text-sm font-semibold">{points} pts</span>
+ {/* <span className="text-sm font-semibold">{points} pts</span> */}
 </div>
 
         </div>

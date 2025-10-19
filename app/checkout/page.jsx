@@ -20,7 +20,7 @@ const page = () => {
   const [promoCodes, setPromoCodes] = useState([]); // Store promo codes from API
   const [usedAbcd1234, setUsedAbcd1234] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
-  const [deliveryFee, setDeliveryFee] = useState(subtotal >= 100 ? 0 : 5);
+  const [deliveryFee, setDeliveryFee] = useState(subtotal >= 100 ? 0 : 3);
   const [total, setTotal] = useState((subtotal + deliveryFee).toFixed(2));
   const [country, setCountry] = useState('');
   const [points, setPoints] = useState(0);
@@ -93,7 +93,7 @@ const applyPoints = () => {
       }
     }
  
-    setDeliveryFee(subtotal >= 100 ? 0 : 4);
+    setDeliveryFee(subtotal >= 100 ? 0 : 3);
   }, [subtotal]);
 
   useEffect(() => {
@@ -215,7 +215,7 @@ useEffect(() => {
   if (normalizedCity === 'beirut') {
     setDeliveryFee(3);
   } else {
-    setDeliveryFee(5);
+    setDeliveryFee(3);
   }
 }, [subtotal, inputs.city]);
 
@@ -1227,7 +1227,7 @@ useEffect(() => {
                     </div>
 
 
-{points > 0 && !pointsDiscount && (
+{/* {points > 0 && !pointsDiscount && (
   <button 
     onClick={applyPoints} 
     className="text-black p-2  underline mt-2 mb-2 w-full"
@@ -1240,7 +1240,7 @@ useEffect(() => {
   <p className="text-green-600 p-2  underline mt-2 mb-2 w-full">
     ✅ {points} points applied (-${pointsDiscount})
   </p>
-)}
+)} */}
 
 
                     {total !== null && (
