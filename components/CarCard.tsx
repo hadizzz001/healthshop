@@ -36,9 +36,12 @@ const CarCard = ({ temp }: CarCardProps) => {
         <div className="px-2 mt-3 text-center sm:text-left">
           <h2 className="myPrice1">{title}</h2>
           <div className="inline-flex flex-wrap gap-x-2 items-baseline justify-center sm:justify-start text-white">
-            <span className="font-light text-[11px] py-1 line-through text-gray-400">
-              ${parseFloat(price).toFixed(2)}
-            </span>
+{price != null && (
+  <span className="font-light text-[11px] py-1 line-through text-gray-400">
+    ${parseFloat(price).toFixed(2)}
+  </span>
+)}
+
             <span className="myPrice">
               ${parseFloat(discount).toFixed(2)} USD
             </span>

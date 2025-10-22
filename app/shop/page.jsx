@@ -322,7 +322,7 @@ const Body = () => {
                                 </h3>
                                 <div className="price-container br_inline-flex br_flex-wrap br_gap-x-2 br_items-baseline apex:br_text-white group-[.centered]/tile:br_justify-center">
                                   <span className="font-light text-[13px] py-1 line-through text-gray-400 float-left  ">
-                                    {!item.color?.some(c => c.sizes?.length > 0) && (
+                                    {item.price != null && (
                                       <span>${parseFloat(item.price).toFixed(2)}</span>
                                     )}
 

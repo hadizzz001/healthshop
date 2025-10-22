@@ -106,26 +106,26 @@ const Body = () => {
                         key={item._id}
                         className="br_grid br_grid-cols-1 supports-subgrid:br_row-span-4 supports-subgrid:br_grid-rows-[subgrid]"
                       >
-<div className="relative w-full aspect-square  flex items-center justify-center  ">
-  <img
-  src={item.img[0].replace('/upload/', '/upload/f_auto,q_25/')}
-    alt="Default"
-    className="max-w-full max-h-full object-contain"
-  />
+                        <div className="relative w-full aspect-square  flex items-center justify-center  ">
+                          <img
+                            src={item.img[0].replace('/upload/', '/upload/f_auto,q_25/')}
+                            alt="Default"
+                            className="max-w-full max-h-full object-contain"
+                          />
 
-  {(
-    (item.type === 'single' && parseInt(item.stock) === 0) ||
-    (item.type === 'collection' &&
-      item.color?.every(color =>
-        color.sizes?.every(size => parseInt(size.qty) === 0)
-      )
-    )
-  ) && (
-    <div className="absolute inset-0 bg-gray-600 bg-opacity-70 text-white flex items-center justify-center text-lg font-bold z-10">
-      Out of Stock
-    </div>
-  )}
-</div>
+                          {(
+                            (item.type === 'single' && parseInt(item.stock) === 0) ||
+                            (item.type === 'collection' &&
+                              item.color?.every(color =>
+                                color.sizes?.every(size => parseInt(size.qty) === 0)
+                              )
+                            )
+                          ) && (
+                              <div className="absolute inset-0 bg-gray-600 bg-opacity-70 text-white flex items-center justify-center text-lg font-bold z-10">
+                                Out of Stock
+                              </div>
+                            )}
+                        </div>
 
 
 
@@ -154,7 +154,8 @@ const Body = () => {
                                 </h3>
                                 <div className="price-container br_inline-flex br_flex-wrap br_gap-x-2 br_items-baseline  group-[.centered]/tile:br_justify-center">
                                   <span className="font-light text-[13px] py-1 line-through text-gray-400 float-left  ">
-                                    {!item.color?.some(c => c.sizes?.length > 0) && (
+
+                                    {item.price != null && (
                                       <span>${parseFloat(item.price).toFixed(2)}</span>
                                     )}
 

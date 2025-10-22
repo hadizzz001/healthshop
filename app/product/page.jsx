@@ -363,7 +363,15 @@ const Page = () => {
                       )
                     ) : (
                       <div className="flex items-center space-x-2 mb-3">
+
+
+{price != null && (
                         <p className="font-light text-[13px] py-1 line-through text-gray-400 float-left">${parseFloat(price).toFixed(2)}</p>
+
+)}
+
+
+
                         <p className="br_text-base-sans-stretched md:br_text-lg-sans-stretched myGray">
                           ${discount} 
                         </p>
