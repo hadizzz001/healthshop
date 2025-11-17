@@ -13,7 +13,7 @@ import Offer from '../components/Offer'
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import PointsWatcher from "../components/PointsWatcher";
-
+import FacebookPixel from '../components/FacebookPixel';
 
 
 
@@ -135,6 +135,7 @@ export default function RootLayout({
       </>
 
       <body >
+        <FacebookPixel />
         <PointsWatcher />
         <Offer />
         <GifLoader />
