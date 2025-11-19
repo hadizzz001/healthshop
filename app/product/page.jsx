@@ -8,20 +8,25 @@ import { useCart } from '../context/CartContext';
 import { useBooleanValue } from '../context/CartBoolContext';
 import QuantitySelector from '../../components/QuantitySelector';
 import OutOfStockComponent from '../../components/OutOfStockComponent';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
- 
-import { motion } from 'framer-motion';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Thumbs, Autoplay, Controller, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/thumbs"; 
+import 'swiper/css/navigation';
+
+
 
 const Page = () => {
+  const [mainSwiper, setMainSwiper] = useState(null);
+  const [zoomSwiper, setZoomSwiper] = useState(null);
   const [translateXValue, setTranslateXValue] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const searchParams = useSearchParams();
   const search = searchParams.get('id');
   const custom = searchParams.get('custom');
   const imgg = searchParams.get('imgg');
-  let imgs, title, price, desc, cat, brand, discount, id, stock, type, color, points
+  let imgs, title, price, desc, cat, brand, discount, id, stock, type, color, sub, fact, icode;
   const { cart, addToCart, quantities } = useCart();
   const { isBooleanValue, setBooleanValue } = useBooleanValue();
   const isInCart = cart?.some((item) => item._id === search);
@@ -32,10 +37,9 @@ const Page = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [displayedPrice, setDisplayedPrice] = useState(null);
   const [hasSizes, setHasSizes] = useState(false);
-
-
-
-
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const hasRun = useRef(false);
+  const [zoomedImg, setZoomedImg] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +60,11 @@ const Page = () => {
 
 
 
+
+
+
+
+
   if (allTemp1) {
     id = allTemp1._id;
     imgs = allTemp1.img;
@@ -68,8 +77,12 @@ const Page = () => {
     stock = allTemp1.stock;
     type = allTemp1.type;
     color = allTemp1.color;
-    points = allTemp1.points;
+    sub = allTemp1.sub;
+    fact = allTemp1.factory;
+    icode = allTemp1.code;
   }
+
+ 
 
 
   useEffect(() => {
@@ -111,6 +124,10 @@ const Page = () => {
 
 
 
+
+
+
+
   function handleClickc() {
     var cartb = document.getElementById("cartid");
     var cartb2 = document.getElementById("cartid2");
@@ -123,6 +140,14 @@ const Page = () => {
       }
     }
   };
+
+
+
+
+
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -141,6 +166,7 @@ const Page = () => {
 
     addToCart(allTemp1, quantity, selectedColor, selectedSize);
     handleClickc();
+
   };
 
 
@@ -180,6 +206,40 @@ const Page = () => {
 
 
 
+  useEffect(() => {
+    if (allTemp1 && color && color.length > 0) {
+      // Set the first available color
+      const firstColorObj = availableColorsWithSizes?.[0] || availableColorsWithoutSizes?.[0];
+      if (firstColorObj) {
+        setSelectedColor(firstColorObj.color);
+
+        // If this color has sizes, set the first available size
+        if (firstColorObj.sizes && firstColorObj.sizes.length > 0) {
+          const firstSize = firstColorObj.sizes.find(s => s.qty > 0);
+          if (firstSize) {
+            setSelectedSize(firstSize.size);
+            setDisplayedPrice(firstSize.price);
+          }
+        } else {
+          // If no sizes, set the color price directly
+          setDisplayedPrice(firstColorObj.price ?? null);
+        }
+      }
+    }
+  }, [allTemp1]);
+
+
+  useEffect(() => {
+    if (mainSwiper && zoomSwiper) {
+      mainSwiper.controller.control = zoomSwiper;
+      zoomSwiper.controller.control = mainSwiper;
+    }
+  }, [mainSwiper, zoomSwiper]);
+
+
+
+
+
 
   return (
     <>
@@ -188,6 +248,75 @@ const Page = () => {
           __html: "\n\n.uploadcare--widget__button, .uploadcare--widget__button:hover {\n\tpadding: 10px;\n\tbackground-color: #d7d7d7; \n  color: #212529;\n  width:100%;\n}\n\n.uploadcare--widget__button:hover {\n\tbackground-color: #c1c1c1;\n  \n}\n\n\n"
         }}
       />
+
+      {/* Zoom Modal */}
+
+
+
+      {zoomedImg && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80"
+          onClick={() => setZoomedImg(null)}
+          style={{ cursor: "zoom-out", zIndex: 9999 }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-[90vw] max-h-[90vh]"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setZoomedImg(null)}
+              className="absolute top-4 right-4 text-white text-4xl font-light z-50 hover:scale-110 transition"
+              style={{ cursor: "pointer" }}
+            >
+              ×
+            </button>
+
+            <Swiper
+              pagination={{ clickable: true }}
+              navigation={{
+                nextEl: ".swiper-button-next-custom",
+                prevEl: ".swiper-button-prev-custom",
+              }}
+              spaceBetween={10}
+              slidesPerView={1}
+              className="w-full h-full"
+              modules={[Pagination, Controller, Navigation]}
+              onSwiper={setZoomSwiper}
+              controller={{ control: mainSwiper }}
+            >
+              {imgs.map((item, idx) => (
+                <SwiperSlide
+                  key={idx}
+                  className="flex justify-center items-center"
+                >
+                  <img
+                    src={item.replace("/upload/", "/upload/q_80/")}
+                    alt=""
+                    className="max-w-[90vw] max-h-[90vh] object-contain select-none"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Left Arrow */}
+            <button
+              className="swiper-button-prev-custom absolute left-6 top-1/2 -translate-y-1/2 text-white text-5xl font-light z-50 transition hover:scale-110"
+            >
+              ‹
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              className="swiper-button-next-custom absolute right-6 top-1/2 -translate-y-1/2 text-white text-5xl font-light z-50 transition hover:scale-110"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      )}
+
+
 
       <div className="ProductDetailWrapper  md:mt-20  mt-20">
         <div className="BreadcrumbsWrapper">
@@ -199,326 +328,410 @@ const Page = () => {
             <div className="Layout br_contents">
               <unsafe-html style={{ display: "none" }} />
               <events-enabled data-events="custom.product.view" />
-              <div className="Layout_TwoColumns br_edition-">
-                <section style={{ position: "relative" }}>
-                  <span className="ProvidersIfSelectedProductMatchesFilter">
-                    <div className="HtmlProductGallery">
-                      <div className="HtmlProductGallery_GalleryWrapper">
-                        <div className="HtmlProductInfiniteGallery" id="InfiniteGallery0" style={{ width: "auto", height: "100%" }}>
-                          <style type="text/css" dangerouslySetInnerHTML={{
-                            __html: "#InfiniteGallery0 .HtmlProductInfiniteGallery { }#InfiniteGallery0 .HtmlProductInfiniteGallery__Wrapper { position:relative;overflow:hidden;width:100%;height:100%}#InfiniteGallery0 .HtmlProductInfiniteGallery__Slides { position:absolute;top:0;width:1200%;height:100%;display:grid;grid-template-columns:repeat(12, 1fr);transition:transform 300ms ease;cursor:grab}#InfiniteGallery0 .HtmlProductInfiniteGallery__Slides--dragging { transition:none}#InfiniteGallery0 .HtmlProductInfiniteGallery__Slides_Slide { max-width:100%;max-height:100%;overflow:hidden;position:relative;user-drag:none;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}"
-                          }} />
-                          <div className="HtmlProductInfiniteGallery__Wrapper">
-                            <div className="HtmlProductInfiniteGallery__Slides " style={{ transform: `translateX(${translateXValue}%)` }}>
-                              {imgs && imgs?.length > 0 ? (
-                                imgs.map((item) => (
-                                  <div>
-                                    <div className="HtmlProductInfiniteGallery__Slides_Slide">
-                                      <div className="Slide Slide--image">
-                                        <img src={"" + item} style={{ maxWidth: "100%", height: "auto" }} />
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <div className='container'>
-                                  <h2 className='text-black text-xl dont-bold'>...</h2>
+              <div className=" container">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                  {/* LEFT: Swipe gallery */}
+<div className="w-full relative">
+  {imgs && imgs.length > 0 ? (
+    <>
+      <Swiper
+        pagination={{ clickable: true }}
+        navigation={true}                      // ✅ SHOW ARROWS
+        spaceBetween={10}
+        slidesPerView={1}
+        thumbs={{ swiper: thumbsSwiper }}
+        className="rounded-lg overflow-hidden"
+        modules={[Pagination, Navigation, Thumbs, Controller]}  // ✅ ADD Navigation
+        onSwiper={setMainSwiper}
+        controller={{ control: zoomSwiper }}
+      >
+        {imgs.map((item, idx) => (
+          <SwiperSlide key={idx} className="relative flex justify-center items-center">
+
+            <div className="w-full aspect-square flex justify-center items-center relative">
+              <img
+                src={item.replace("/upload/", "/upload/q_80/")}
+                alt=""
+                className="w-full h-full object-contain cursor-zoom-in"
+                onClick={() => setZoomedImg(item)}     // ✅ ZOOM ON CLICK
+              />
+
+              {/* ✅ Zoom Icon Bottom-right */}
+<div
+  className="absolute bottom-10 right-3 bg-gray-200 text-gray-600 p-2 rounded-full cursor-pointer"
+  onClick={(e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setZoomedImg(item);
+  }}
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5 pointer-events-auto"   // ← ADD THIS
+    style={{ pointerEvents: "auto" }}         // ← DOUBLE SAFE
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M21 21l-4.35-4.35m1.15-5.4a7 7 0 11-14 0 7 7 0 0114 0z"
+    />
+  </svg>
+</div>
+
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* Thumbnail Swiper */}
+      <Swiper
+        onSwiper={setThumbsSwiper}
+        modules={[Thumbs]}
+        spaceBetween={10}
+        slidesPerView={4}
+        watchSlidesProgress
+        className="mt-3"
+      >
+        {imgs.map((item, idx) => (
+          <SwiperSlide key={idx} className="cursor-pointer">
+            <div className="w-full aspect-square overflow-hidden rounded-md border border-gray-300">
+              <img src={item} className="w-full h-full object-cover" />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </>
+  ) : (
+    <div className="text-gray-600">No images available</div>
+  )}
+</div>
+
+
+
+
+                  {/* RIGHT: ProductSelector (your data block) */}
+                  <section className="ProductSelector">
+                    <span className="ProvidersSingleProduct--selected">
+                      <h4 className="myGray">
+                        {title}
+                        <span
+                          className="ProductSelector_EditionLabel"
+                          style={{ margin: "0 0 0 3px" }}
+                        />
+                      </h4>
+                      <p className="mb-2 myGray">Category: {cat}</p> 
+                    </span>
+
+                    <div className="ApexPriceAndFreeShippingWrapper">
+                      <div>
+                        <div className="FreeShippingMessage FreeShippingMessage--empty" />
+                      </div>
+                    </div>
+
+                    <hr />
+
+                    <div className="ProductSelector_IntroBlurb">
+                      {/* --- your color/size logic --- */}
+                      {isCollection && (
+                        <div className="mb-4">
+                          <h2 className="color-label myGray">Choose a Color:</h2>
+                          <div className="color-options">
+                            {availableColorsWithSizes?.map((c, index) => (
+                              <div
+                                key={index}
+                                onClick={() => {
+                                  setSelectedColor(c.color);
+                                  setSelectedSize(null);
+                                  setDisplayedPrice(null);
+                                }}
+                                className={`color-circle ${selectedColor === c.color ? "selected" : ""
+                                  }`}
+                                style={{ backgroundColor: c.color }}
+                                title={`${c.color}`}
+                              />
+                            ))}
+                          </div>
+
+                          {!selectedColor && (
+                            <p className="error-message">Please select a color.</p>
+                          )}
+
+                          {selectedColor &&
+                            availableColorsWithSizes.some(
+                              (c) => c.color === selectedColor
+                            ) && (
+                              <div className="mb-4">
+                                <h2 className="size-label">Choose a Size:</h2>
+                                <div className="size-options">
+                                  {availableColorsWithSizes
+                                    .find((c) => c.color === selectedColor)
+                                    ?.sizes?.filter((s) => s.qty > 0)
+                                    ?.map((s, idx) => (
+                                      <button
+                                        key={idx}
+                                        onClick={() => {
+                                          setSelectedSize(s.size);
+                                          setDisplayedPrice(s.price);
+                                        }}
+                                        className={`px-3 py-1 m-1 border rounded ${selectedSize === s.size
+                                          ? "bg-blue-500 text-white"
+                                          : "bg-gray-100"
+                                          } myGray`}
+                                      >
+                                        {s.size}
+                                      </button>
+                                    ))}
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="HtmlProductGallery_Thumbnails">
-                        {imgs && imgs?.length > 0 ? (
-                          imgs.map((item, idx) => (
-                            <button onClick={() => handleClick(idx)} className="Thumbnail Thumbnail--image">
-                              <img src={"" + item} />
-                            </button>
-                          ))
-                        ) : (
-                          <div className='container'>
-                            <h2 className='text-black text-xl dont-bold'>...</h2>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </span>
-                </section>
-                <section className="ProductSelector">
-                  <span className="ProvidersSingleProduct--selected">
-                    <h1 className='myntit'>
-                      {title}
-                      <span className="ProductSelector_EditionLabel" style={{ margin: "0 0 0 3px" }} />
-                    </h1>
-                    <p className='myPrice'>
-                      Category: {cat}
-                    </p>
-                    {/* <p className='myPrice'>
-                      You will earn {points} points
-                    </p> */}
+                              </div>
+                            )}
 
-                  </span>
-                  <div className="ApexPriceAndFreeShippingWrapper">
-
-                    <div>
-                      <div className="FreeShippingMessage FreeShippingMessage--empty" />
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="ProductSelector_IntroBlurb">
-
-
-                    {isCollection && (
-                      <div className="mb-4">
-                        <h2 className="color-label myGray">Choose a Color:</h2>
-                        <div className="color-options">
-                          {availableColorsWithSizes?.map((c, index) => (
-                            <div
-                              key={index}
-                              onClick={() => {
-                                setSelectedColor(c.color);
-                                setSelectedSize(null);
-                                setDisplayedPrice(null);
-                              }}
-                              className={`color-circle ${selectedColor === c.color ? 'selected' : ''}`}
-                              style={{ backgroundColor: c.color }}
-                              title={`${c.color}`}
-                            />
-                          ))}
-                        </div>
-
-                        {!selectedColor && <p className="error-message">Please select a color.</p>}
-
-                        {selectedColor && availableColorsWithSizes.some(c => c.color === selectedColor) && (
-                          <div className="mb-4">
-                            <h2 className="size-label">Choose a Size:</h2>
-                            <div className="size-options">
-                              {availableColorsWithSizes
-                                .find((c) => c.color === selectedColor)
-                                ?.sizes?.filter((s) => s.qty > 0)
-                                ?.map((s, idx) => (
-                                  <button
-                                    key={idx}
+                          {availableColorsWithoutSizes?.length > 0 && (
+                            <div className="mt-4">
+                              <h2 className="color-label myGray">Other Colors:</h2>
+                              <div className="color-options">
+                                {availableColorsWithoutSizes?.map((c, index) => (
+                                  <div
+                                    key={index}
                                     onClick={() => {
-                                      setSelectedSize(s.size);
-                                      setDisplayedPrice(s.price);
+                                      setSelectedColor(c.color);
+                                      setSelectedSize(null);
+                                      setDisplayedPrice(c.price ?? null);
                                     }}
-                                    className={`px-3 py-1 m-1 border rounded ${selectedSize === s.size ? 'bg-blue-500 text-white' : 'bg-gray-100'
-                                      } myGray`}
-                                  >
-                                    {s.size}
-                                  </button>
+                                    className={`color-circle ${selectedColor === c.color ? "selected" : ""
+                                      }`}
+                                    style={{ backgroundColor: c.color }}
+                                    title={`${c.color}`}
+                                  />
                                 ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-
-                        {availableColorsWithoutSizes?.length > 0 && (
-                          <div className="mt-4">
-                            <h2 className="color-label myGray">Other Colors:</h2>
-                            <div className="color-options">
-                              {availableColorsWithoutSizes?.map((c, index) => (
-                                <div
-                                  key={index}
-                                  onClick={() => {
-                                    setSelectedColor(c.color);
-                                    setSelectedSize(null);
-                                    setDisplayedPrice(c.price ?? null);
-                                  }}
-                                  className={`color-circle ${selectedColor === c.color ? 'selected' : ''}`}
-                                  style={{ backgroundColor: c.color }}
-                                  title={`${c.color}`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-
-
-
-
-
-
-
-
-
-
-                    {hasSizes ? (
-                      selectedSize ? (
-                        <div className="flex items-center space-x-2">
-                          <h1 className="mb-2 myGray line-through font-bold text-lg">
-                            ${(parseFloat(displayedPrice) * 1.25).toFixed(2)}
-                          </h1>
-
-                          <h1 className="mb-2 myRed font-bold text-lg">
-                            ${displayedPrice} 
-                          </h1>
+                          )}
                         </div>
-                      ) : (
-                        <></>
-                      )
-                    ) : (
-                      <div className="flex items-center space-x-2 mb-3">
+                      )}
+                      {/* --- price logic --- */}
+                      {allTemp1?.noprice !== "yes" && (
+                        hasSizes ? (
+                          selectedSize ? (
+                            (() => {
+                              const original = parseFloat(displayedPrice);
+                              return (
+                                <div className="flex items-center space-x-2">
+                                  <h3 className="mb-2 myRed font-bold myPrice123">
+                                    ${original.toFixed(2)}
+                              
+                                  </h3>
+                                </div>
+                              );
+                            })()
+                          ) : null
+                        ) : (() => {
+                          const originalPrice = parseFloat(price || "0");
+                          const discountPrice = parseFloat(discount || "0");
+
+                          if (originalPrice === discountPrice || discountPrice === 0) {
+                            return (
+                              <div className="flex items-center space-x-2">
+                                <h3 className="mb-2 myRed font-bold myPrice123">
+                                  ${originalPrice.toFixed(2)}
+                                 
+                                </h3>
+                              </div>
+                            );
+                          }
+
+                          const discountPercent = Math.round(
+                            ((originalPrice - discountPrice) / originalPrice) * 100
+                          );
+
+                          return (
+<div className="flex items-center space-x-2">
+
+  {/* Show discounted price only if it's valid and > 0 */}
+  {discountPrice != null && discountPrice > 0 && !isNaN(discountPrice) && (
+    <h3 className="mb-2 myRed font-bold myPrice123">
+      ${discountPrice.toFixed(2)}
+    </h3>
+  )}
+
+  {/* Show original price only if discounted price is valid */}
+  {originalPrice != null && originalPrice > 0 && (
+    <h2 className="mb-2 myGray line-through myPrice123">
+      ${originalPrice.toFixed(2)}
+    </h2>
+  )}
+
+  {/* Show percentage only if valid AND > 0 */}
+  {discountPercent != null &&
+    discountPercent > 0 &&
+    !isNaN(discountPercent) && (
+      <span className="text-xs text-gray-500">
+        ({discountPercent}% off)
+      </span>
+    )}
+</div>
+
+                          );
+                        })()
+                      )}
 
 
-{price != null && (
-                        <p className="font-light text-[13px] py-1 line-through text-gray-400 float-left">${parseFloat(price).toFixed(2)}</p>
-
-)}
-
-
-
-                        <p className="br_text-base-sans-stretched md:br_text-lg-sans-stretched myGray">
-                          ${discount} 
-                        </p>
-                      </div>
-                    )}
 
 
 
 
+                    </div>
 
-
-
-
-
-
-
-
-
-
-                  </div>
-                  <div className="bagsFeaturesGrid__gridWrapper">
-                    {isInCart ? (
-                      <>
-                        <p style={{ color: "#222", textAlign: "center", fontSize: "2em", fontWeight: "bolder" }}>It's In Bag!</p>
-                        <div className="">
-                          <div className=""></div>
-                          <div className="">
+                    {/* --- add to cart / in bag --- */}
+                    <div className="bagsFeaturesGrid__gridWrapper">
+                      {isInCart ? (
+                        <>
+                          <p
+                            style={{
+                              color: "#222",
+                              textAlign: "center",
+                              fontSize: "2em",
+                              fontWeight: "bolder",
+                            }}
+                          >
+                            It's In cart!
+                          </p>
+                          <div>
                             <span className="ProvidersSingleProduct--selected">
-                              <button type="button" className="AddToCart HtmlProductAddToCart" style={{ borderRadius: "0" }} onClick={gotocart} >
+                              <button
+                                type="button"
+                                className="AddToCart HtmlProductAddToCart"
+                                style={{ borderRadius: "0" }}
+                                onClick={gotocart}
+                              >
                                 <span>CHECKOUT NOW</span>
                               </button>
                             </span>
                           </div>
-                          <div className=""></div>
-                        </div>
-                        <br />
-                      </>
-                    ) : (
-                      <div>
+                          <br />
+                        </>
+                      ) : (
+                        <div>
+                          <form onSubmit={handleSubmit}>
+                            {!isOutOfStock ? (
+                              allTemp1?.noprice === "yes" ? (
+                                <button
+                                  type="button"
+                                  className="AddToCart HtmlProductAddToCart"
+                                  style={{ borderRadius: "0" }}
+                                  onClick={() =>
+                                    window.open("https://wa.me/+96171117587", "_blank")
+                                  }
+                                >
+                                  <span>GET PRICE</span>
+                                </button>
+                              ) : (
+                                <>
+                                  <QuantitySelector
+                                    initialQty={quantity}
+                                    onChange={setQuantity}
+                                    productId={id}
+                                    type={type}
+                                    selectedColor={selectedColor}
+                                    selectedSize={selectedSize}
+                                  />
+ 
 
-                        <form onSubmit={handleSubmit}>
-                          <div className="">
-                            <QuantitySelector initialQty={quantity} onChange={setQuantity} productId={id} type={type} selectedColor={selectedColor} selectedSize={selectedSize} />
-                            <div className=""></div>
-                            <div className="">
-                              <span className="ProvidersSingleProduct--selected">
-                                {!isOutOfStock ? (
                                   <button
                                     type="submit"
                                     className="AddToCart HtmlProductAddToCart"
                                     style={{ borderRadius: "0" }}
                                     disabled={isCollection && !selectedColor}
                                   >
-                                    <span>ADD TO BAG</span>
+                                    <span>ADD TO CART</span>
                                   </button>
-                                ) : (
-                                  <OutOfStockComponent itemName={title} />
-                                )}
+                                </>
+                              )
+                            ) : (
+                              <OutOfStockComponent itemName={title} />
+                            )}
+                          </form>
 
-                              </span>
-                            </div>
-                            <div className=""></div>
-                          </div>
-                        </form>
-                    <span className="ProvidersIfSelectedProductMatchesFilter">
-                      <p
-                        className='br_text-base-sans-stretched md:br_text-lg-sans-stretched myGray'
-                        dangerouslySetInnerHTML={{ __html: desc }}
-                      /><br />
-                    </span>
-                      </div>
-                    )}
-                    <br />
-                  </div>
-                  <span className="ProvidersIfSelectedProductMatchesFilter">
-                  </span>
+                        </div>
+                      )}
 
-                </section>
-              </div>
-    <div className="ProvidersIfSelectedProductMatchesFilter mt-4">
-      <content-block slug="product-page-wssb">
-        <div className="ProductTile-SliderContainer ProductTile-SliderContainer--YMAL">
+                                                  <p
+                              className="myGray"
+                              dangerouslySetInnerHTML={{ __html: desc }}
+                            />
+                            <br />
+                      <br />
+                    </div>
 
-          {allTemp2 && allTemp2.length > 0 ? (
-            <>
-              <div data-product-list-category="ymal-slider">
-                <div className="padforcat">
-                  <h1
-                    onClick={() => router.push("/shop")}
-                    className="myntit mb-3 sm:mb-5"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Similar Items
-                  </h1>
-
-                  <section className="mb-5" style={{ maxWidth: "100%" }}>
-                    <Swiper
-                      modules={[Autoplay]}
-                      loop={true}
-                      autoplay={{
-                        delay: 2500,
-                        disableOnInteraction: false,
-                      }}
-                      breakpoints={{
-                        150: { slidesPerView: 1, spaceBetween: 15 },
-                        768: { slidesPerView: 4, spaceBetween: 20 },
-                        1024: { slidesPerView: 4, spaceBetween: 24 },
-                      }}
-                      spaceBetween={15}
-                    >
-                      {allTemp2.map((temp, index) => (
-                        <SwiperSlide key={temp.id}>
-                          <div className="flex justify-center items-center w-full">
-                            <motion.div
-                              initial={{ opacity: 0, x: -50 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              viewport={{ once: true, amount: 0.2 }}
-                              transition={{
-                                duration: 0.6,
-                                delay: index * 0.3,
-                                ease: "easeOut",
-                              }}
-                            >
-                              <CarCard temp={temp} />
-                            </motion.div>
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
                   </section>
                 </div>
               </div>
-            </>
-          ) : (
-            <div className="home___error-container">
-              <h2 className="text-black text-xl font-bold">
-                No products available
-              </h2>
-            </div>
-          )}
-        </div>
-      </content-block>
-    </div>
+
+                                        <div className="container mt-10">
+
+                          </div>
+              <span className="ProvidersIfSelectedProductMatchesFilter">
+                <content-block slug="product-page-wssb">
+                  <style dangerouslySetInnerHTML={{
+                    __html: ".bagsFeaturesGrid{margin:0 auto;padding:30px 5%;background:#111622}.bagsFeaturesGrid__gridWrapper{max-width:1150px;margin:0 auto}.bagsFeaturesGrid__title{-webkit-font-smoothing:antialiased;text-align:center;padding:0 0 25px;margin:0 auto;color:#fff}.bagsFeaturesGrid__feature{background:inherit;display:grid;grid-template-s:auto;align-items:center;padding:5px 0}.bagsFeaturesGrid__feature--text{-webkit-font-smoothing:antialiased;text-align:center;padding:15px 0 20px;grid-:2}.bagsFeaturesGrid__feature--text a{color:inherit}.bagsFeaturesGrid__feature--text h3{color:#fff;padding-bottom:10px}.bagsFeaturesGrid__feature--text p{color:#eee}.bagsFeaturesGrid__feature--image{position:relative;width:100%;min-height:62vw}@media (min-width: 811px){.bagsFeaturesGrid__feature--image{min-height:28vw}}@media (min-width: 1460px){.bagsFeaturesGrid__feature--image{min-height:409px}}.bagsFeaturesGrid__feature--image img{width:100%;display:block}.bagsFeaturesGrid__feature--image--logo{position:absolute;bottom:3.5%;right:8%;width:15vw}.bagsFeaturesGrid__feature--image--logo img{width:100%}.bagsFeaturesGrid__feature--text--logo{width:100px;padding-top:30px}.bagsFeaturesGrid__feature--text--logo img{width:100%}@media (min-width: 811px){.bagsFeaturesGrid{padding:75px 10%}.bagsFeaturesGrid__title{padding:0 0 60px}.bagsFeaturesGrid__feature{display:grid;grid-template-columns:1fr 1fr;grid-template-s:auto;padding:30px 0}.bagsFeaturesGrid__feature--image--logo{width:7vw}.bagsFeaturesGrid__feature .left{padding-right:15%}.bagsFeaturesGrid__feature .right{padding-left:15%}.bagsFeaturesGrid__feature--text{-webkit-font-smoothing:antialiased;text-align:left;padding:0;grid-:auto}}"
+                  }} />
+                  <style dangerouslySetInnerHTML={{
+                    __html: ".ProductTile-SliderContainer--YMAL .ProductTile-SliderContainer-Title{height:auto;text-align:center;padding-bottom:10px}.ProductTile-SliderContainer--YMAL.ProductTile-SliderContainer{padding:40px 0 10px;background-color:#fff ;display:flex;flex-direction:column;align-items:center}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev-ar,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next-ar{height:25px;width:25px;border-top:2px solid #999;border-right:2px solid #999}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next-ar{transform:rotate(45deg);margin:0 15px 0 0}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev-ar{transform:rotate(225deg);margin:0 0 0 15px}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next{height:430px;width:80px;cursor:pointer;background-color:transparent;transition:opacity .3s ease;display:none;border:none;padding:0;appearance:none;-webkit-appearance:none}.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev[disabled],.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next[disabled]{opacity:0;pointer-events:none}@media (min-width: 700px){.ProductTile-SliderContainer--YMAL .ProductTile-Slider-prev,.ProductTile-SliderContainer--YMAL .ProductTile-Slider-next{display:flex;align-items:center;justify-content:center}}@media (min-width: 811px){.ProductTile-SliderContainer--YMAL .ProductTile-SliderContainer-Title{padding-bottom:30px}}.ProductTile-SliderContainer--YMAL .productRangeSlider{display:flex;align-items:center;max-width:1340px;width:100%;padding:5px;justify-content:space-between;margin:0 auto;min-height:145px}"
+                  }} />
+                  <div className="ProductTile-SliderContainer ProductTile-SliderContainer--YMAL" data-product-list-category="ymal-slider">
+                    <div className="ProductTile-SliderContainer-Title br_text-3xl-serif br_text-white myGray">RELATED PRODUCTS:</div>
+                    {allTemp2 && allTemp2?.length > 0 ? (
+                      <section style={{ maxWidth: "100%" }}>
+                        <Swiper
+                          spaceBetween={20}
+                          loop
+                          dir="rtl" // This makes the slider right-to-left
+                          modules={[Autoplay]}
+                          autoplay={{
+                            delay: 2000,
+                            stopOnLastSlide: false,
+                            reverseDirection: true, // optional, for autoplay reverse
+                          }}
+                          breakpoints={{
+                            150: {
+                              slidesPerView: 2,
+                            },
+                            768: {
+                              slidesPerView: 4,
+                            },
+                          }}
+                        >
+                          {allTemp2.map((temp, index) => (
+                            <SwiperSlide key={temp._id}>
+                              <CarCard temp={temp} index={index} />
+                            </SwiperSlide>
+                          ))}
+                        </Swiper>
+
+                      </section>
+                    ) : (
+                      <div className='home___error-container'>
+                        <h2 className='text-black text-xl dont-bold'>...</h2>
+                      </div>
+                    )}
+                  </div>
+                </content-block>
+              </span>
             </div>
           </div>
         </bellroy-product-detail>
-      </div>
+      </div> 
+
+      <style
+  dangerouslySetInnerHTML={{
+    __html:
+      "\n  /* 🔹 Gray Swiper Arrows */\n.swiper-button-prev,\n.swiper-button-next {\n  color: #9ca3af !important; /* Tailwind: gray-400 */\n}\n\n"
+  }}
+/>
+
     </>
   );
 }
